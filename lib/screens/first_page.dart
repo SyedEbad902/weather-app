@@ -33,7 +33,7 @@ class FirstPage extends StatelessWidget {
             const SizedBox(
               height: 40,
             ),
-            Container(
+            SizedBox(
               width: 200,
               height: 60,
               child: ElevatedButton(
@@ -44,7 +44,8 @@ class FirstPage extends StatelessWidget {
                 })),
                 onPressed: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => MainScreen()));
+                      MaterialPageRoute(builder: (context) => const MainScreen()));
+                  
                 },
                 child: const Text("Get Started",
                     style: TextStyle(
