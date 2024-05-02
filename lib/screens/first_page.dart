@@ -8,7 +8,7 @@ class FirstPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: const Color.fromRGBO(74, 59, 148, 5),
+        color: const Color.fromRGBO(101, 201, 252, 5),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -43,9 +43,10 @@ class FirstPage extends StatelessWidget {
                   return Colors.amberAccent;
                 })),
                 onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => const MainScreen()));
-                  
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const MainScreen()));
                 },
                 child: const Text("Get Started",
                     style: TextStyle(
