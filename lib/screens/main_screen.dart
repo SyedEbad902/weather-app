@@ -17,10 +17,13 @@ class _MainScreenState extends State<MainScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getData();
+    getData(dropdownvalue);
 
     // Navigate to main screen
   }
+
+  // String dropdownvalue = "Karachi";
+  // var items = ["Karachi,LAhore ,Peshawar,Hyderabad,Islamabad"];
 
   Map responseBody = {};
   double temperature = 0;
@@ -30,11 +33,14 @@ class _MainScreenState extends State<MainScreen> {
   int sunriseTimestamp = 0;
   int sunsetTimestamp = 0;
   String cityName = "";
-  Future getData() async {
+  num windSpeed = 0;
+  num feelsLike = 0;
+
+  Future getData(String city) async {
     try {
-      var city = 'karachi';
+      // var city = 'karachi';
       var url = Uri.parse(
-          'https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=806cc66253eca12d22cdccaf11c74d8f');
+          'https://api.openweathermap.org/data/2.5/weather?q=$city&appid=806cc66253eca12d22cdccaf11c74d8f');
 
       var response = await http.get(url);
       if (response.statusCode == 200) {
@@ -48,6 +54,8 @@ class _MainScreenState extends State<MainScreen> {
             sunriseTimestamp = responseBody["sys"]["sunrise"];
             sunsetTimestamp = responseBody["sys"]["sunset"];
             cityName = responseBody["name"];
+            windSpeed = responseBody['wind']['speed'] * 3.6;
+            feelsLike = responseBody['main']["feels_like"] - 273;
           });
         });
       } else {
@@ -59,6 +67,30 @@ class _MainScreenState extends State<MainScreen> {
     }
     return responseBody;
   }
+
+  String dropdownvalue = 'Karachi';
+  var items = [
+    'Karachi',
+    'Lahore',
+    'Islamabad',
+    'Faisalabad',
+    'Rawalpindi',
+    'Multan',
+    'Peshawar',
+    'Quetta',
+    'Sargodha',
+    'Gujranwala',
+    'New York',
+    'Los Angeles',
+    'Chicago',
+    'Houston',
+    'Phoenix',
+    'Philadelphia',
+    'San Antonio',
+    'San Diego',
+    'Dallas',
+    'San Jose',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -83,16 +115,38 @@ class _MainScreenState extends State<MainScreen> {
               children: [
                 Positioned(
                     top: 30,
-                    child: Container(
+                    child: SizedBox(
                       width: 360,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(cityName,
-                              style: TextStyle(
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.white)),
+                          DropdownButton(
+                            alignment: AlignmentDirectional.bottomCenter,
+                            value: dropdownvalue,
+                            borderRadius: BorderRadius.circular(20),
+                            padding: const EdgeInsets.all(0),
+                            menuMaxHeight: 400,
+                            style: const TextStyle(
+                                fontSize: 20,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                            dropdownColor:
+                                const Color.fromRGBO(101, 201, 252, 5),
+                            // icon: const Icon(Icons.keyboard_arrow_down),
+                            items: items.map((String items) {
+                              return DropdownMenuItem(
+                                value: items,
+                                child: Text(items),
+                              );
+                            }).toList(),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                dropdownvalue = newValue!;
+                              });
+
+                              getData(dropdownvalue);
+                            },
+                          ),
                         ],
                       ),
                     )),
@@ -133,36 +187,91 @@ class _MainScreenState extends State<MainScreen> {
                     ),
                   ),
                 ),
+                
                 Positioned(
-                  top: 340,
-                  child: SizedBox(
-                    width: 360,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "Max : ${maxTemp.truncate()}",
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                              fontFamily: 'PortLligatSans'),
-                        ),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        Text(
-                          "Min : ${minTemp.truncate()}",
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
+                  top: 400,
+                  left: 45,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Image.asset(
+                            'assets/images/image11.png',
+                            scale: 4,
                           ),
-                        ),
-                      ],
-                    ),
+                          const SizedBox(
+                            width: 6,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Wind",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w300),
+                              ),
+                              const SizedBox(
+                                height: 3,
+                              ),
+                              Text(
+                                "${windSpeed.truncate()} Km/h",
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Row(
+                        children: [
+                          Image.asset(
+                            'assets/images/image6.png',
+                            scale: 8,
+                          ),
+                          const SizedBox(
+                            width: 6,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Feels Like",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w300),
+                              ),
+                              const SizedBox(
+                                height: 3,
+                              ),
+                              Text(
+                                "${feelsLike.truncate()}",
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+                    ],
                   ),
                 ),
                 Positioned(
-                  top: 450,
+                    top: 480,
+                    left: 30,
+                    child: Container(
+                      height: 1,
+                      width: 300,
+                      color: Colors.black,
+                    )),
+                Positioned(
+                  top: 500,
                   left: 35,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -236,7 +345,7 @@ class _MainScreenState extends State<MainScreen> {
                   ),
                 ),
                 Positioned(
-                    bottom: 190,
+                    bottom: 140,
                     left: 30,
                     child: Container(
                       height: 1,
@@ -244,7 +353,7 @@ class _MainScreenState extends State<MainScreen> {
                       color: Colors.black,
                     )),
                 Positioned(
-                  bottom: 110,
+                  bottom: 60,
                   left: 30,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -317,20 +426,13 @@ class _MainScreenState extends State<MainScreen> {
                     ],
                   ),
                 ),
-                // Positioned(
-                //     child: FloatingActionButton(
-                //   onPressed: () {
-                //     getData();
-                //   },
-                //   child: const Text('go'),
-                // )),
               ],
             ),
           )),
         ),
       );
     } else {
-      return Scaffold(
+      return const Scaffold(
         body: Center(
           child: CircularProgressIndicator(),
         ),
